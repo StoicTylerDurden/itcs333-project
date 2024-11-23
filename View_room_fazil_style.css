@@ -1,0 +1,11 @@
+
+.container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.card{
+    margin: 2rem;
+    width: 25rem;
+}

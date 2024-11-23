@@ -4,19 +4,15 @@
 // Then create a file named ".gitignore" in this file include "config.php"
 
 // include the config file which has the credentials
-require_once 'config.php';
-
-$dsn = "mysql:host=" . DATABASE_HOSTNAME . ";dbname=" . DATABASE_NAME;
-$username = DATABASE_USERNAME;
-$password = DATABASE_PASSWORD;
 
 try {
     // Create a new PDO instance
-    $pdo = new PDO($dsn, $username, $password);
-    echo "Connected successfully to the database!";
+    $pdo = new PDO("mysql:host=localhost;dbname=room_booking","root","");
+    // echo "Connected successfully to the database!"; 
+    //use the above echo command to check if the connection is esatablished successfully or not
 } catch (PDOException $e) {
     $error_message = $e->getMessage();
-    echo $error_message;
+    echo $error_message." Cannot connect to the database!!\nTry again";
     exit();
 }
 ?>
