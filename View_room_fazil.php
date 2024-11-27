@@ -2,6 +2,7 @@
 
 include "db_connect.php"; //including the connection object that is connected to the database in db_connect.php i.e $pdo
 session_start();
+$_SESSION["USER"] = "FAZIL";
 ?>
 
 <!DOCTYPE html>
@@ -17,14 +18,14 @@ session_start();
 
 <body>
     <?php
-    $sql = "SELECT ROOM_NAME,CAPACTIY,EQUIPMENT,LOCATION FROM ROOMS";
+    $sql = "SELECT ROOM_NAME,CAPACITY,EQUIPMENT,LOCATION FROM ROOMS";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo '<div class="container">';
     foreach ($result as $room) {
         $room_name = $room['ROOM_NAME'];
-        $room_capacity = $room["CAPACTIY"];
+        $room_capacity = $room["CAPACITY"];
         $room_equipment = $room["EQUIPMENT"];
         $room_location = $room["LOCATION"];
         echo '
@@ -35,7 +36,7 @@ session_start();
                     <p class="card-text"> <h6>Capacity: ' . $room_capacity . '</h6></p>
                     <p class="card-text"> <h6>Equipment: ' . $room_equipment . '</h6></p>
                     <p class="card-text"> <h6>Location: ' . $room_location . '</p>
-                    <a href="booking_system_fazil.php?room_name=' . urlencode($room_name) . '&room_capacity=' . urlencode($room_capacity) . '&room_equipment=' . urlencode($room_equipment) . '&room_location=' . urlencode($room_location) . '" class="btn btn-primary">Book</a>
+                    <a href="booking_system_fazil.php?room_name=' . urlencode($room_name) . '&room_capacity=' . urlencode($room_capacity) . '&room_equipment=' . urlencode($room_equipment) . '&room_location=' . urlencode($room_location) . '" class="btn btn-primary">View</a>
                 </div>
         </div>
         ';
