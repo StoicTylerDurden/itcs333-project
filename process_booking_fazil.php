@@ -1,48 +1,54 @@
 <?php
 session_start();
+include "db_connect.php"; // Include database connection
+
+
+$user_id = $_SESSION['USER_ID']; // Get user ID from session
+$room_name = $_SESSION['room_name']; // Get room name from session
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $date_selected = $_POST["date"];
     $stime_selected = $_POST["stime"];
     $etime_selected = $_POST["etime"];
 
-    // Check if the date is empty
-    if (empty($date_selected)) {
-        $error_message = "Error: Date cannot be empty. Please select a date.";
+    if (empty($date_selected) || empty($stime_selected) || empty($etime_selected)) {
+        $error_message = "All fields are required.";
     } else {
-        $is_time_valid = true; // Flag to check if the time slot is valid
+        try {
+            // Check for conflicts
+            $sql = "SELECT * 
+                    FROM bookings 
+                    JOIN rooms ON bookings.ROOM_ID = rooms.ROOM_ID 
+                    WHERE rooms.ROOM_NAME = :room_name 
+                      AND bookings.STATUS = 'BOOKED'
+                      AND DATE(START_TIME) = :date
+                      AND (TIME(:stime) < TIME(END_TIME) AND TIME(:etime) > TIME(START_TIME))";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(":room_name", $room_name);
+            $stmt->bindValue(":date", $date_selected);
+            $stmt->bindValue(":stime", $stime_selected);
+            $stmt->bindValue(":etime", $etime_selected);
+            $stmt->execute();
 
-        // Check the selected date and time against existing bookings in the session array
-        if (isset($_SESSION['Array_booked']) && !empty($_SESSION['Array_booked'])) {
-            foreach ($_SESSION["Array_booked"] as $time_booked) {
-                $booked_date = $time_booked["date"]; // Get the booked date
-                $stime_booked = $time_booked["stime"];
-                $etime_booked = $time_booked["etime"];
+            if ($stmt->rowCount() > 0) {
+                $error_message = "The selected time slot overlaps with an existing booking.";
+            } else {
+                // Insert new booking
+                $sql = "INSERT INTO bookings (USER_ID, ROOM_ID, START_TIME, END_TIME, STATUS) 
+                        VALUES (:user_id, 
+                                (SELECT ROOM_ID FROM rooms WHERE ROOM_NAME = :room_name), 
+                                :start_time, :end_time, 'BOOKED')";
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindValue(":user_id", $user_id);
+                $stmt->bindValue(":room_name", $room_name);
+                $stmt->bindValue(":start_time", "$date_selected $stime_selected");
+                $stmt->bindValue(":end_time", "$date_selected $etime_selected");
+                $stmt->execute();
 
-                // Check if the selected date matches a booked date
-                if ($date_selected == $booked_date) {
-                    // Check for time overlap on the same date
-                    if (
-                        ($stime_selected >= $stime_booked && $stime_selected < $etime_booked) || // Start time overlap
-                        ($etime_selected > $stime_booked && $etime_selected <= $etime_booked) || // End time overlap
-                        ($stime_selected <= $stime_booked && $etime_selected >= $etime_booked)   // Complete overlap
-                    ) {
-                        $error_message = "Error: Selected time slot overlaps with an already booked slot on the same date.";
-                        $is_time_valid = false;
-                        break;
-                    }
-                }
+                $success_message = "Booking successful!";
             }
-        }
-
-        if ($is_time_valid) {
-            // Add the new booking to the session array
-            $_SESSION["Array_booked"][] = [
-                "date" => $date_selected,
-                "stime" => $stime_selected,
-                "etime" => $etime_selected
-            ];
-            $success_message = "Booking successful! Selected Date: $date_selected, Start Time: $stime_selected, End Time: $etime_selected.";
+        } catch (PDOException $e) {
+            $error_message = "Database error: " . $e->getMessage();
         }
     }
 }
@@ -87,10 +93,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-weight: bold;
         }
 
-        .form-group label {
-            font-weight: bold;
-        }
-
         .btn-primary {
             width: 100%;
         }
@@ -100,40 +102,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container booking-container">
         <div class="booking-title">Room Booking Confirmation</div>
-
-        <!-- Display messages -->
         <?php if (isset($error_message)) : ?>
-            <div class="alert alert-danger" role="alert">
-                <?php echo $error_message; ?>
-            </div>
+            <div class="alert alert-danger"><?php echo $error_message; ?></div>
         <?php endif; ?>
-
         <?php if (isset($success_message)) : ?>
-            <div class="alert alert-success" role="alert">
-                <?php echo $success_message; ?>
-            </div>
+            <div class="alert alert-success"><?php echo $success_message; ?></div>
         <?php endif; ?>
-
-        <!-- Booking form -->
-        <form action="" method="POST">
-            <div class="form-group">
-                <label for="date">Select Date</label>
-                <input type="date" class="form-control" id="date" name="date" value="<?php echo $date_selected ?? ''; ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="stime">Starting Time</label>
-                <input type="text" class="form-control" id="stime" name="stime" value="<?php echo $stime_selected ?? ''; ?>" placeholder="e.g. 08:00 AM" required>
-            </div>
-            <div class="form-group">
-                <label for="etime">Ending Time</label>
-                <input type="text" class="form-control" id="etime" name="etime" value="<?php echo $etime_selected ?? ''; ?>" placeholder="e.g. 09:00 AM" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Submit Booking</button>
-        </form>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCX9Rkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 </body>
 
 </html>

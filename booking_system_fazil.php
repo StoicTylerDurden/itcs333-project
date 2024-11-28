@@ -21,7 +21,7 @@ if (isset($_GET['room_name']) && isset($_GET['room_capacity']) && isset($_GET['r
 // echo "Equipment: " . $_SESSION['room_equipment'] . "<br>";
 // echo "Location: " . $_SESSION['room_location'] . "<br>";
 
-$user = $_SESSION['USER']; //used for knowing who is the current user
+$user_id = $_SESSION['USER_ID']; //used for knowing who is the current user
 
 
 $sql = "SELECT B.START_TIME,B.END_TIME,U.NAME,U.ROLE,R.ROOM_NAME FROM BOOKINGS B NATURAL JOIN USERS U NATURAL JOIN ROOMS R WHERE R.ROOM_NAME = :room_name AND B.STATUS = :book";
@@ -106,8 +106,8 @@ foreach ($result as $user_who_booked) {
 
 <body>
     <div class="container booking-container">
-        <div class="booking-title">Book a Room</div>
-        <form action="process_booking_fazil.php" method="post">
+    <div class="booking-title">Book Room <?php echo htmlspecialchars($_SESSION['room_name']); ?></div>
+    <form action="process_booking_fazil.php" method="post">
             <div class="form-group">
                 <label for="date">Select Date</label>
                 <input type="date" class="form-control" id="date" name="date" required>
