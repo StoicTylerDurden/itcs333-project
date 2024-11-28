@@ -12,11 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['HASHED_PASSWORD'])) {
-        $_SESSION['user_id'] = $user['USER_ID'];
-        $_SESSION['name'] = $user['NAME'];
-        $_SESSION['role'] = $user['ROLE'];
-
-        header("Location: View_room_fazil.php"); 
+        $_SESSION['USER_ID'] = $user['USER_ID']; // Set user ID
+        $_SESSION['USER_ROLE'] = $user['ROLE']; // Optional: Store user role
+        $_SESSION['USER_NAME'] = $user['NAME']; // Optional: Store user name
+        header("Location: View_room_fazil.php"); // Redirect to room viewing page
         exit();
     } else {
         $_SESSION['login_error'] = "Invalid email or password.";
