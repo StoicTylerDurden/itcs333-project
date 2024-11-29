@@ -1,5 +1,5 @@
 <?php
-include "db_connect.php"; // Include the connection object
+include "db_connect.php"; 
 session_start();
 
 // Ensure user is logged in
