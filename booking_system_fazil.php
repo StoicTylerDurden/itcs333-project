@@ -1,5 +1,8 @@
 <?php
 session_start();
+// The navbar should be included in all pages
+include "navbar.php"; 
+
 unset($_SESSION['Array_booked']);
 include "db_connect.php";
 // Ensure 'Array_booked' is initialized properly
