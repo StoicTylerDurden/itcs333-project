@@ -27,6 +27,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
+    
     <div class="container mt-5">
         <h1 class="mb-4 text-center">Browse Rooms</h1>
 
