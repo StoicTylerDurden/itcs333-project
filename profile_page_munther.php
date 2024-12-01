@@ -1,9 +1,9 @@
 <?php
 session_start();
-require 'db_connection.php';
+require 'db_connect.php';
 
 $user_id = $_SESSION['user_id'];
-$sql = "SELECT * FROM users WHERE id = ?";
+$sql = "SELECT * FROM users WHERE USER_ID = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -15,27 +15,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
 
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-        $target_dir = "uploads/";
-        $target_file = $target_dir . basename($_FILES["profile_picture"]["name"]);
-        $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-        $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
-        if (in_array($file_type, $allowed_types) && $_FILES['profile_picture']['size'] <= 2000000) {
-            if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $target_file)) {
-                $sql = "UPDATE users SET profile_picture = ? WHERE id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("si", $target_file, $user_id);
-                $stmt->execute();
-                $user['profile_picture'] = $target_file;
-            }
-        }
+        $image_data = file_get_contents($_FILES['profile_picture']['tmp_name']);
+        $sql = "UPDATE users SET PROFILE_PICTURE = ? WHERE USER_ID = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("bi", $image_data, $user_id);
+        $stmt->send_long_data(0, $image_data);
+        $stmt->execute();
     }
 
-    $sql = "UPDATE users SET name = ?, email = ? WHERE id = ?";
+    $sql = "UPDATE users SET NAME = ?, EMAIL = ? WHERE USER_ID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssi", $name, $email, $user_id);
     if ($stmt->execute()) {
-        $user['name'] = $name;
-        $user['email'] = $email;
+        $user['NAME'] = $name;
+        $user['EMAIL'] = $email;
         $message = "Profile updated successfully!";
     } else {
         $error = "Error updating profile!";
@@ -67,17 +60,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mb-3">
                         <label for="profilePicture" class="form-label">Profile Picture</label>
                         <input type="file" class="form-control" id="profilePicture" name="profile_picture">
-                        <?php if (!empty($user['profile_picture'])): ?>
-                            <img src="<?php echo $user['profile_picture']; ?>" alt="Profile Picture" class="img-thumbnail mt-2" style="max-width: 150px;">
+                        <?php if (!empty($user['PROFILE_PICTURE'])): ?>
+                            <img src="data:image/jpeg;base64,<?php echo base64_encode($user['PROFILE_PICTURE']); ?>" alt="Profile Picture" class="img-thumbnail mt-2" style="max-width: 150px;">
                         <?php endif; ?>
                     </div>
                     <div class="mb-3">
                         <label for="userName" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="userName" name="name" value="<?php echo htmlspecialchars($user['name']); ?>">
+                        <input type="text" class="form-control" id="userName" name="name" value="<?php echo htmlspecialchars($user['NAME']); ?>">
                     </div>
                     <div class="mb-3">
                         <label for="userEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="userEmail" name="email" value="<?php echo htmlspecialchars($user['email']); ?>">
+                        <input type="email" class="form-control" id="userEmail" name="email" value="<?php echo htmlspecialchars($user['EMAIL']); ?>">
                     </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
