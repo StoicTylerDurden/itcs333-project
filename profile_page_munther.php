@@ -1,14 +1,17 @@
 <?php
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
 require 'db_connect.php';
 
 $user_id = $_SESSION['user_id'];
 $sql = "SELECT * FROM users WHERE USER_ID = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$user_id]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
@@ -17,16 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
         $image_data = file_get_contents($_FILES['profile_picture']['tmp_name']);
         $sql = "UPDATE users SET PROFILE_PICTURE = ? WHERE USER_ID = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("bi", $image_data, $user_id);
-        $stmt->send_long_data(0, $image_data);
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(1, $image_data, PDO::PARAM_LOB);
+        $stmt->bindParam(2, $user_id, PDO::PARAM_INT);
         $stmt->execute();
     }
 
     $sql = "UPDATE users SET NAME = ?, EMAIL = ? WHERE USER_ID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssi", $name, $email, $user_id);
-    if ($stmt->execute()) {
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$name, $email, $user_id]);
+
+    if ($stmt->rowCount()) {
         $user['NAME'] = $name;
         $user['EMAIL'] = $email;
         $message = "Profile updated successfully!";
