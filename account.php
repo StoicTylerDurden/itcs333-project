@@ -1,6 +1,7 @@
 <?php
 session_start();
-include('db_connect.php');
+// The navbar should be included in all pages
+include "navbar.php"; include('db_connect.php');
 
 if (!isset($_SESSION['USER_ID'])) {
     header('Location: login.php');
@@ -49,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $updateQuery .= " WHERE USER_ID = :user_id";
     $updateStmt = $pdo->prepare($updateQuery);
     $updateStmt->execute($params);
-    header('Location: profile_page.php');
+    header('Location: account.php');
     exit();
 }
 ?>
@@ -61,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile Management</title>
     <link rel="stylesheet" href="account.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
 </head>
 <body>
     <div class="container">
