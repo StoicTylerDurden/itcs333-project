@@ -110,6 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if (isset($success_message)) : ?>
             <div class="alert alert-success"><?php echo $success_message; ?></div>
         <?php endif; ?>
+        <a href="View_room_fazil.php" class="btn btn-secondary">Back</a>
     </div>
 </body>
 

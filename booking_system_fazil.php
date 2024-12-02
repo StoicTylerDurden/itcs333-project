@@ -134,6 +134,8 @@ foreach ($result as $user_who_booked) {
                 <label for="stime">Starting Time</label>
                 <select id="stime" name="stime" class="form-control" onchange="updateEndingTime()" required>
                     <!-- Options will be dynamically added here -->
+                    <option value="">Select Starting Time</option> <!-- Initially empty option -->
+
                 </select>
             </div>
             <div class="form-group">
@@ -146,13 +148,23 @@ foreach ($result as $user_who_booked) {
     </div>
 
     <script>
+        // Set the minimum date for the date picker
+        document.addEventListener("DOMContentLoaded", () => {
+            const dateInput = document.getElementById("date");
+            const today = new Date().toISOString().split("T")[0];
+            dateInput.setAttribute("min", today); // Set today's date as the minimum date
+            // Clear the radio buttons and select input when the page loads
+            document.querySelectorAll('input[name="type"]').forEach(radio => radio.checked = false);
+            document.getFElementById("stime").innerHTML = "<option value=''>Select Starting Time</option>"; // Reset starting time select
+        });
+
         function updateTimes() {
             const stimeSelect = document.getElementById("stime");
             const etimeDisplay = document.getElementById("etime-display");
             const etimeInput = document.getElementById("etime");
 
             // Clear existing options
-            stimeSelect.innerHTML = "";
+            stimeSelect.innerHTML = "<option value=''>Select Starting Time</option>"; // Empty option at first
             etimeDisplay.textContent = "Please select a starting time.";
             etimeInput.value = "";
 
