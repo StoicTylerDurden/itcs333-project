@@ -1,0 +1,88 @@
+/* default style */
+*,::before,::after{
+    box-sizing: border-box;
+}
+
+body,h1,p{
+    margin: 0;
+    padding: 0;
+}
+
+/* Vars */
+:root{
+  --bg: #e6e6e7;
+  --color: #007bff;
+  --border: rgba(0,0,0,.2);
+  --text: #ffffff;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif; /*our font*/
+    background: var(--bg);
+}
+
+main{
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.con{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+h1{
+    font-size: 2.5rem; /*1rem = 16px*/
+}
+
+.login-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: white;
+    border: 2px solid var(--border);
+    padding: 13px;
+    border-radius: 5px;
+    color: black;
+    font-weight: 600;
+}
+
+.login-wrapper form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.login-wrapper form input{
+    border:none;
+    border-radius: 50px;
+    font-size: 1rem;
+    padding: 7px 10px;
+    border: 2px solid var(--border);
+}
+
+.login-wrapper form button{
+    border: none;
+    border-radius: 5px;
+    margin: 10px auto;
+    font-size: 1rem;
+    padding: 8px 14px;
+    cursor: pointer;
+    background: var(--color);
+    color: var(--text);
+    font-weight: 600;
+}
+
+.login-wrapper p a{
+    color: red;
+    text-decoration: none;
+}
+
+
