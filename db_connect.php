@@ -6,8 +6,7 @@ try {
     
     // Create a new PDO instance
     $pdo = new PDO($dsn, $username, $password);
-     echo " You have connected to room_booking database";
-    
+    //  echo " You have connected to room_booking database";
 
 } catch (PDOException $e) {
     $error_message = $e->getMessage();
