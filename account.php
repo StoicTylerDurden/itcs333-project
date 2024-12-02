@@ -21,37 +21,36 @@ if (!$user) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    
+    $updateQuery = "UPDATE users SET NAME = :name, EMAIL = :email";
+    $params = [':name' => $name, ':email' => $email, ':user_id' => $user_id];
+
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
         $fileTmpPath = $_FILES['profile_picture']['tmp_name'];
         $fileType = $_FILES['profile_picture']['type'];
+        $fileSize = $_FILES['profile_picture']['size'];
 
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (in_array($fileType, $allowedTypes)) {
-            $fileData = file_get_contents($fileTmpPath);
-            $updateQuery = "UPDATE users SET PROFILE_PICTURE = :profile_picture WHERE USER_ID = :user_id";
-            $updateStmt = $pdo->prepare($updateQuery);
-            $updateStmt->bindParam(':profile_picture', $fileData, PDO::PARAM_LOB);
-            $updateStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-            $updateStmt->execute();
-            header('Location: profile_page.php');
-            exit();
+        if ($fileSize > 64 * 1024) {
+            echo "File size exceeds the limit of 64 KB.";
         } else {
-            echo "Invalid file type. Please upload a JPEG, PNG, or GIF image.";
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (in_array($fileType, $allowedTypes)) {
+                $fileData = file_get_contents($fileTmpPath);
+                $updateQuery .= ", PROFILE_PICTURE = :profile_picture";
+                $params[':profile_picture'] = $fileData;
+            } else {
+                echo "Invalid file type. Please upload a JPEG, PNG, or GIF image.";
+            }
         }
     }
 
-    if (isset($_POST['name']) && isset($_POST['email'])) {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $updateQuery = "UPDATE users SET NAME = :name, EMAIL = :email WHERE USER_ID = :user_id";
-        $updateStmt = $pdo->prepare($updateQuery);
-        $updateStmt->bindParam(':name', $name, PDO::PARAM_STR);
-        $updateStmt->bindParam(':email', $email, PDO::PARAM_STR);
-        $updateStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $updateStmt->execute();
-        header('Location: profile_page.php');
-        exit();
-    }
+    $updateQuery .= " WHERE USER_ID = :user_id";
+    $updateStmt = $pdo->prepare($updateQuery);
+    $updateStmt->execute($params);
+    header('Location: profile_page.php');
+    exit();
 }
 ?>
 
@@ -60,69 +59,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>User Profile Management</title>
     <link rel="stylesheet" href="account.css">
 </head>
 <body>
     <div class="container">
-        <h1>User Profile</h1>
-        <div class="profile-pic">
+        <h1>Edit Profile</h1>
+        <div class="profile-pic" id="profile-pic-container">
             <img id="profile-pic-preview" 
                 src="<?php echo $user['PROFILE_PICTURE'] ? 'data:image/jpeg;base64,' . base64_encode($user['PROFILE_PICTURE']) : 'https://via.placeholder.com/150'; ?>" 
                 alt="Profile Picture">
         </div>
         <form method="post" enctype="multipart/form-data" id="profile-form">
-            <label for="profile_picture">Upload New Profile Picture:</label>
-            <input type="file" name="profile_picture" id="profile_picture" accept="image/jpeg, image/png, image/gif">
-
+            <input type="file" name="profile_picture" id="profile_picture" accept="image/jpeg, image/png, image/gif" hidden>
             <label for="name">Name:</label>
             <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($user['NAME']); ?>" required>
 
             <label for="email">Email:</label>
             <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['EMAIL']); ?>" required>
 
-            <button type="submit">Update Profile</button>
+            <button type="submit">Save Changes</button>
         </form>
     </div>
 
     <script>
+        document.getElementById('profile-pic-container').addEventListener('click', function() {
+            document.getElementById('profile_picture').click();
+        });
+
         document.getElementById('profile_picture').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
+                if (file.size > 64 * 1024) {
+                    alert("File size exceeds the 64 KB limit.");
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('profile-pic-preview').src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
-        });
-
-        document.getElementById('profile-form').addEventListener('submit', function(event) {
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            let valid = true;
-
-            if (!name) {
-                alert("Name cannot be empty");
-                valid = false;
-                document.getElementById('name').focus();
-            } else if (!/^[\w\s]+$/.test(name)) {
-                alert("Name contains invalid characters");
-                valid = false;
-                document.getElementById('name').focus();
-            }
-
-            if (!email) {
-                alert("Email cannot be empty");
-                valid = false;
-                document.getElementById('email').focus();
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                alert("Invalid email format");
-                valid = false;
-                document.getElementById('email').focus();
-            }
-
-            if (!valid) event.preventDefault();
         });
     </script>
 </body>

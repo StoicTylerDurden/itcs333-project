@@ -24,6 +24,7 @@ h1 {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .profile-pic img {
@@ -45,8 +46,7 @@ label {
 }
 
 input[type="text"],
-input[type="email"],
-input[type="file"] {
+input[type="email"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
