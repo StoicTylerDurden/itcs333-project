@@ -2,12 +2,12 @@
 session_start();
 include('db_connect.php');
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['USER_ID'])) {
     header('Location: login.php');
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['USER_ID'];
 
 $query = "SELECT * FROM users WHERE USER_ID = :user_id";
 $stmt = $pdo->prepare($query);
