@@ -1,17 +1,15 @@
 <?php
 session_start();
 // The navbar should be included in all pages
-include "navbar.php";
+include "navbar.php"; 
 
 unset($_SESSION['Array_booked']);
 include "db_connect.php";
-
 // Ensure 'Array_booked' is initialized properly
 if (!isset($_SESSION['Array_booked'])) {
     $_SESSION['Array_booked'] = [];
 }
 $_SESSION['Array_booked_counter'] = 0;
-
 // Check if the room data is passed via URL
 if (isset($_GET['room_name']) && isset($_GET['room_capacity']) && isset($_GET['room_equipment']) && isset($_GET['room_location'])) {
     $_SESSION['room_name'] = $_GET['room_name'];
@@ -20,7 +18,14 @@ if (isset($_GET['room_name']) && isset($_GET['room_capacity']) && isset($_GET['r
     $_SESSION['room_location'] = $_GET['room_location'];
 }
 
-$user_id = $_SESSION['USER_ID']; // Used to identify the current user
+// You can now use these session variables as needed, for example:
+// echo "Room Name: " . $_SESSION['room_name'] . "<br>";
+// echo "Capacity: " . $_SESSION['room_capacity'] . "<br>";
+// echo "Equipment: " . $_SESSION['room_equipment'] . "<br>";
+// echo "Location: " . $_SESSION['room_location'] . "<br>";
+
+$user_id = $_SESSION['USER_ID']; //used for knowing who is the current user
+
 
 $sql = "SELECT B.START_TIME,B.END_TIME,U.NAME,U.ROLE,R.ROOM_NAME FROM BOOKINGS B NATURAL JOIN USERS U NATURAL JOIN ROOMS R WHERE R.ROOM_NAME = :room_name AND B.STATUS = :book";
 $stmt = $pdo->prepare($sql);
@@ -28,6 +33,7 @@ $stmt->bindValue(":room_name", $_SESSION['room_name']);
 $stmt->bindValue(":book", "BOOKED");
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// var_dump($result);
 
 foreach ($result as $user_who_booked) {
     if (!empty($result)) {
@@ -36,15 +42,15 @@ foreach ($result as $user_who_booked) {
             $user_name_who_booked = $user_who_booked["NAME"];
             $user_start_time = $user_who_booked["START_TIME"];
             $user_end_time = $user_who_booked["END_TIME"];
-
+    
             $part1 = explode(" ", $user_start_time);
             $date1 = $part1[0];
             $time1 = $part1[1];
-
+    
             $part2 = explode(" ", $user_end_time);
             $date2 = $part2[0];
             $time2 = $part2[1];
-
+    
             $length = $_SESSION["Array_booked_counter"];
             $_SESSION['Array_booked'][$length] = [
                 "date" => $date1,
@@ -54,7 +60,10 @@ foreach ($result as $user_who_booked) {
             $_SESSION["Array_booked_counter"]++;
         }
     }
+    // echo "<br><br><br>ROOM NAME = ".$user_who_booked['ROOM_NAME']."<br>BOOKED BY: ".$user_who_booked["NAME"]."<br>ROLE = ".$user_who_booked["ROLE"]."<br>START TIME = ".$user_who_booked["START_TIME"]."<br>END_TIME = ".$user_who_booked["END_TIME"];
+    
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +81,6 @@ foreach ($result as $user_who_booked) {
             justify-content: center;
             align-items: center;
         }
-
         .booking-container {
             background: #ffffff;
             padding: 30px;
@@ -81,7 +89,6 @@ foreach ($result as $user_who_booked) {
             max-width: 400px;
             width: 100%;
         }
-
         .booking-title {
             text-align: center;
             margin-bottom: 20px;
@@ -89,11 +96,9 @@ foreach ($result as $user_who_booked) {
             font-weight: bold;
             color: #343a40;
         }
-
         .btn-primary {
             width: 100%;
         }
-
         .ending-time {
             font-weight: bold;
             color: #343a40;
@@ -104,8 +109,8 @@ foreach ($result as $user_who_booked) {
 
 <body>
     <div class="container booking-container">
-        <div class="booking-title">Book Room <?php echo htmlspecialchars($_SESSION['room_name']); ?></div>
-        <form action="process_booking_fazil.php" method="post">
+    <div class="booking-title">Book Room <?php echo htmlspecialchars($_SESSION['room_name']); ?></div>
+    <form action="process_booking_fazil.php" method="post">
             <div class="form-group">
                 <label for="date">Select Date</label>
                 <input type="date" class="form-control" id="date" name="date" required>
@@ -129,7 +134,6 @@ foreach ($result as $user_who_booked) {
                 <label for="stime">Starting Time</label>
                 <select id="stime" name="stime" class="form-control" onchange="updateEndingTime()" required>
                     <!-- Options will be dynamically added here -->
-                    <option value="">Select Starting Time</option> <!-- Initially empty option -->
                 </select>
             </div>
             <div class="form-group">
@@ -142,24 +146,13 @@ foreach ($result as $user_who_booked) {
     </div>
 
     <script>
-        // Set the minimum date for the date picker
-        document.addEventListener("DOMContentLoaded", () => {
-            const dateInput = document.getElementById("date");
-            const today = new Date().toISOString().split("T")[0];
-            dateInput.setAttribute("min", today); // Set today's date as the minimum date
-
-            // Clear the radio buttons and select input when the page loads
-            document.querySelectorAll('input[name="type"]').forEach(radio => radio.checked = false);
-            document.getElementById("stime").innerHTML = "<option value=''>Select Starting Time</option>"; // Reset starting time select
-        });
-
         function updateTimes() {
             const stimeSelect = document.getElementById("stime");
             const etimeDisplay = document.getElementById("etime-display");
             const etimeInput = document.getElementById("etime");
 
             // Clear existing options
-            stimeSelect.innerHTML = "<option value=''>Select Starting Time</option>"; // Empty option at first
+            stimeSelect.innerHTML = "";
             etimeDisplay.textContent = "Please select a starting time.";
             etimeInput.value = "";
 
@@ -210,3 +203,4 @@ foreach ($result as $user_who_booked) {
 </body>
 
 </html>
+
