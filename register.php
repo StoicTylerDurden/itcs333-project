@@ -9,6 +9,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $role = 'USER'; // Default role for new users
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+    // Email validation patterns
+    $studentEmailPattern = "/^\d{9}@stu\.uob\.edu\.bh$/";
+    $adminEmailPattern = "/^[a-zA-Z0-9._%+-]+@uob\.edu\.bh$/";
+
+    // Validate email format
+    if (!preg_match($studentEmailPattern, $email) && !preg_match($adminEmailPattern, $email)) {
+        $_SESSION['registration_error'] = "Invalid email format. Students must use 9-digit numbers followed by '@stu.uob.edu.bh', and admins must use '@uob.edu.bh'.";
+        header("Location: register.php");
+        exit();
+    }
+
+    // Determine role based on email
+    if (preg_match($adminEmailPattern, $email)) {
+        $role = 'ADMIN';
+    }
+
     // Check for duplicate email
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
     $stmt->execute(['email' => $email]);
