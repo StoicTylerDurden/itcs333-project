@@ -15,11 +15,14 @@ $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->execute();
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+if (!$user) {
+    echo "User not found!";
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
         $fileTmpPath = $_FILES['profile_picture']['tmp_name'];
-        $fileName = $_FILES['profile_picture']['name'];
-        $fileSize = $_FILES['profile_picture']['size'];
         $fileType = $_FILES['profile_picture']['type'];
 
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -58,33 +61,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
+    <link rel="stylesheet" href="account.css">
 </head>
 <body>
-    <h1>Welcome, <?php echo htmlspecialchars($user['NAME']); ?></h1>
-    <p>Email: <?php echo htmlspecialchars($user['EMAIL']); ?></p>
+    <div class="container">
+        <h1>User Profile</h1>
+        <div class="profile-pic">
+            <?php if ($user['PROFILE_PICTURE']): ?>
+                <img src="data:image/jpeg;base64,<?php echo base64_encode($user['PROFILE_PICTURE']); ?>" alt="Profile Picture">
+            <?php else: ?>
+                <img src="https://via.placeholder.com/150" alt="Default Profile Picture">
+            <?php endif; ?>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            <label for="profile_picture">Upload New Profile Picture:</label>
+            <input type="file" name="profile_picture" id="profile_picture" accept="image/jpeg, image/png, image/gif">
 
-    <p>
-        <?php if ($user['PROFILE_PICTURE']): ?>
-            <img src="data:image/jpeg;base64,<?php echo base64_encode($user['PROFILE_PICTURE']); ?>" alt="Profile Picture" width="150" height="150">
-        <?php else: ?>
-            <p>No profile picture uploaded.</p>
-        <?php endif; ?>
-    </p>
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($user['NAME']); ?>" required>
 
-    <form method="post" enctype="multipart/form-data">
-        <label for="profile_picture">Upload New Profile Picture:</label>
-        <input type="file" name="profile_picture" id="profile_picture" accept="image/jpeg, image/png, image/gif">
-        <br><br>
-        
-        <label for="name">Name:</label>
-        <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($user['NAME']); ?>" required>
-        <br><br>
-        
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['EMAIL']); ?>" required>
-        <br><br>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['EMAIL']); ?>" required>
 
-        <button type="submit">Update Profile</button>
-    </form>
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
 </body>
 </html>
