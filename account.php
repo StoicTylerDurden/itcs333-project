@@ -2,12 +2,12 @@
 session_start();
 include('db_connect.php');
 
-if (!isset($_SESSION['USER_ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 
-$user_id = $_SESSION['USER_ID'];
+$user_id = $_SESSION['user_id'];
 
 $query = "SELECT * FROM users WHERE USER_ID = :user_id";
 $stmt = $pdo->prepare($query);
@@ -61,19 +61,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    <link rel="stylesheet" href="account.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #003366;
+        }
+        .profile-pic {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .profile-pic img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 2px solid #003366;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+            color: #003366;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
+        button {
+            background-color: #003366;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00509e;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>User Profile</h1>
         <div class="profile-pic">
-            <?php if ($user['PROFILE_PICTURE']): ?>
-                <img src="data:image/jpeg;base64,<?php echo base64_encode($user['PROFILE_PICTURE']); ?>" alt="Profile Picture">
-            <?php else: ?>
-                <img src="https://via.placeholder.com/150" alt="Default Profile Picture">
-            <?php endif; ?>
+            <img id="profile-pic-preview" 
+                src="<?php echo $user['PROFILE_PICTURE'] ? 'data:image/jpeg;base64,' . base64_encode($user['PROFILE_PICTURE']) : 'https://via.placeholder.com/150'; ?>" 
+                alt="Profile Picture">
         </div>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="profile-form">
             <label for="profile_picture">Upload New Profile Picture:</label>
             <input type="file" name="profile_picture" id="profile_picture" accept="image/jpeg, image/png, image/gif">
 
@@ -86,5 +143,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit">Update Profile</button>
         </form>
     </div>
+
+    <script>
+        document.getElementById('profile_picture').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-pic-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('profile-form').addEventListener('submit', function(event) {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            let valid = true;
+
+            if (!name) {
+                alert("Name cannot be empty");
+                valid = false;
+                document.getElementById('name').focus();
+            } else if (!/^[\w\s]+$/.test(name)) {
+                alert("Name contains invalid characters");
+                valid = false;
+                document.getElementById('name').focus();
+            }
+
+            if (!email) {
+                alert("Email cannot be empty");
+                valid = false;
+                document.getElementById('email').focus();
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert("Invalid email format");
+                valid = false;
+                document.getElementById('email').focus();
+            }
+
+            if (!valid) event.preventDefault();
+        });
+    </script>
 </body>
 </html>
