@@ -11,9 +11,12 @@ body,h1,p{
 /* Vars */
 :root{
   --bg: #e6e6e7;
-  --color: #007bff;
-  --border: rgba(0,0,0,.2);
-  --text: #ffffff;
+  --text: #e6e6e7;
+  --border: 2px solid var(--text);
+  --color: #A78BFA;
+  --color-hover: #835cfa;
+  --shadow: rgba(0,0,0,.2);
+  --fg: #111827;
 }
 
 body{
@@ -40,17 +43,18 @@ main{
 
 h1{
     font-size: 2.5rem; /*1rem = 16px*/
+    color: var(--fg);
 }
 
 .login-wrapper{
     display: flex;
     flex-direction: column;
     gap: 15px;
-    background: white;
-    border: 2px solid var(--border);
-    padding: 13px;
-    border-radius: 5px;
-    color: black;
+    background: var(--fg);
+    box-shadow: 0px 10px 25px 3px var(--shadow);
+    padding: 25px;
+    border-radius: 15px;
+    color: var(--text);
     font-weight: 600;
 }
 
@@ -65,7 +69,10 @@ h1{
     border-radius: 50px;
     font-size: 1rem;
     padding: 7px 10px;
-    border: 2px solid var(--border);
+    border: var(--border);
+    background: var(--fg);
+    color: var(--text);
+    outline: none;
 }
 
 .login-wrapper form button{
@@ -76,13 +83,30 @@ h1{
     padding: 8px 14px;
     cursor: pointer;
     background: var(--color);
-    color: var(--text);
+    color: var(--fg);
+    box-shadow: 0px 5px 7px 0px var(--shadow);
     font-weight: 600;
+    transition: 0.35s ease;
+}
+
+.login-wrapper form button:hover{
+    background: var(--color-hover);
+    box-shadow: 0px 5px 15px 0px var(--shadow);
 }
 
 .login-wrapper p a{
-    color: red;
+    color: var(--color);
     text-decoration: none;
 }
 
+.login-wrapper p a:hover{
+    color: var(--color-hover);
+    text-decoration: underline;
+}
+
+
+#login-error{
+    color: rgb(255, 66, 123);
+    text-align: center;
+}
 

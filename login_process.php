@@ -15,8 +15,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['USER_ID'] = $user['USER_ID']; // Set user ID
         $_SESSION['USER_ROLE'] = $user['ROLE']; // Optional: Store user role
         $_SESSION['USER_NAME'] = $user['NAME']; // Optional: Store user name
+        if ($user['ROLE'] === 'ADMIN') {
+            header("Location: admin_panel.php"); // Redirect to admin panel
+            exit();
+         }
+        else {
         header("Location: View_room_fazil.php"); // Redirect to room viewing page
         exit();
+        }
     } else {
         $_SESSION['login_error'] = "Invalid email or password.";
         header("Location: login.php");

@@ -14,16 +14,6 @@ session_start();
         <div class="con">
             <h1>Login</h1>
             <div class="login-wrapper">
-                <?php
-                if (isset($_SESSION['login_error'])) {
-                    echo "<p style='color: red;'>" . $_SESSION['login_error'] . "</p>";
-                    unset($_SESSION['login_error']);
-                }
-                if (isset($_SESSION['registration_success'])) {
-                    echo "<p style='color: green;'>" . $_SESSION['registration_success'] . "</p>";
-                    unset($_SESSION['registration_success']);
-                }
-                ?>
                 <form action="login_process.php" method="post">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
@@ -32,6 +22,16 @@ session_start();
                     <input type="password" id="password" name="password" required>
 
                     <button type="submit">Login</button>
+                    <?php
+                    if (isset($_SESSION['login_error'])) {
+                        echo "<p id='login-error'>" . $_SESSION['login_error'] . "</p>";
+                        unset($_SESSION['login_error']);
+                    }
+                    if (isset($_SESSION['registration_success'])) {
+                        echo "<p style='color: green;'>" . $_SESSION['registration_success'] . "</p>";
+                        unset($_SESSION['registration_success']);
+                    }
+                    ?>
                 </form>
                 <p>Don't have an account? <a href="register.php">Register here</a></p>
             </div>
