@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require 'db_connect.php'; // Include your existing db connection file
 
 if ($_SESSION['USER_ROLE'] !== 'ADMIN') {
@@ -7,6 +8,7 @@ if ($_SESSION['USER_ROLE'] !== 'ADMIN') {
     exit();
 }
 
+include "navbar_admin.php";
 // Fetch total bookings per room
 $stmt = $pdo->query("SELECT r.ROOM_NAME, COUNT(b.BOOK_ID) AS TOTAL_BOOKINGS
                      FROM rooms r
@@ -21,6 +23,7 @@ $stmt = $pdo->query("SELECT r.ROOM_NAME, SUM(TIMESTAMPDIFF(HOUR, b.START_TIME, b
                      JOIN rooms r ON b.ROOM_ID = r.ROOM_ID
                      GROUP BY r.ROOM_ID");
 $total_usage_hours = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -28,8 +31,7 @@ $total_usage_hours = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="\
-    ">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <title>Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>

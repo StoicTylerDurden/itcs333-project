@@ -1,10 +1,13 @@
 <?php
-include "db_connect.php"; 
+include "db_connect.php";
 session_start();
 
 // The navbar should be included in all pages
-include "navbar.php"; 
-
+if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] == 'ADMIN') {
+    include "navbar_admin.php";
+} else {
+    include "navbar.php";
+}
 // Ensure user is logged in
 if (!isset($_SESSION['USER_ID'])) {
     header("Location: login.php"); // Redirect to login page if not logged in

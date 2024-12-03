@@ -46,8 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Execute the insert query
             if ($insert_stmt->execute()) {
                 // Room added successfully
-                echo "<br/><br/><div class='alert alert-success'>Room added successfully!</div>";
-            } else {
+                echo "<br/><br/><div class='alert alert-success'>Room added successfully! Redirecting in 3 seconds...</div>";
+                echo "<script>
+                    setTimeout(function() {
+                        window.location.href = 'admin_panel.php';
+                    }, 3000); // 3000 milliseconds = 3 seconds
+                </script>";
+            }                       
+             else {
                 // Error inserting the room
                 echo "<div class='alert alert-danger'>Error adding room: " . $insert_stmt->errorInfo()[2] . "</div>";
             }

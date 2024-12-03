@@ -18,10 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user['ROLE'] === 'ADMIN') {
             header("Location: admin_panel.php"); // Redirect to admin panel
             exit();
-         }
-        else {
-        header("Location: View_room_fazil.php"); // Redirect to room viewing page
-        exit();
+        } else {
+            header("Location: View_room_fazil.php"); // Redirect to room viewing page
+            exit();
         }
     } else {
         $_SESSION['login_error'] = "Invalid email or password.";
@@ -29,4 +28,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 }
-?>
