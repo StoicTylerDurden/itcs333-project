@@ -29,16 +29,71 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Viewing</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
+        .container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .search-bar {
+            border-radius: 25px;
+            border: 2px solid #007bff;
+            padding: 10px 20px;
+        }
+
+        .search-bar:focus {
+            border-color: #0056b3;
+            outline: none;
+            box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .card-footer a {
+            background-color: #007bff;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: #ffffff;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .card-footer a:hover {
+            background-color: #0056b3;
+            color: #ffffff;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4 text-center">Browse Rooms</h1>
+        <h1 class="mb-4 text-center text-primary">Browse Rooms</h1>
 
         <!-- Search Bar -->
         <div class="mb-4">
-            <input type="text" id="search-bar" class="form-control" placeholder="Search by room name or number">
+            <input type="text" id="search-bar" class="form-control search-bar" placeholder="Search by room name or number">
         </div>
 
         <!-- Room List -->
@@ -79,7 +134,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         });
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfZ2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 </body>
 
