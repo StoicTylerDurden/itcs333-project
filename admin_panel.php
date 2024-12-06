@@ -18,8 +18,6 @@ $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,7 +31,8 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4 text-center">Add New Room</h1>
+        <h1 class="mb-4 text-center">Admin Panel</h1>
+        <h2 class="mb-4 text-center">Add New Room</h2>
         <a href="add_room.php" class="btn btn-primary w-50 mx-auto d-block">Add</a>
         <br />
         <h2 class="mb-4 text-center">Manage Available Rooms</h2>
@@ -61,12 +60,13 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="card-footer bg-white">
                             <div class="d-flex justify-content-between">
                                 <a href="edit_room.php?room_id=<?php echo urlencode($room['ROOM_ID']); ?>"
-                                    class="btn btn-primary w-100">Edit</a>
+                                    class="btn btn-warning w-100">Edit</a>
 
                                 <!--<a href="#"
                                     class="btn btn-danger w-100">Delete</a>-->
 
-                                <a href="delete_room.php?room_id=<?php echo urlencode($room['ROOM_ID']); ?>" class="btn btn-danger w-100"
+                                <a href="delete_room.php?room_id=<?php echo urlencode($room['ROOM_ID']); ?>"
+                                    class="btn btn-danger w-100"
                                     onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
                             </div>
                         </div>
