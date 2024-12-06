@@ -10,7 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
   <style>
     body {
-      padding-top: 70px;
+      padding-top: 40px;
       /* Add spacing between the navbar and content */
     }
 
@@ -56,13 +56,13 @@
           <a class="nav-link" href="admin_panel.php">Edit Rooms <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="View_room_fazil.php">Schedule Managment <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="schedule_managment.php">Schedule Managment <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="account.php">Account</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="logout.php">logout</a>
+          <a class="nav-link" href="logout.php">Logout</a>
         </li>
 
       </ul>
