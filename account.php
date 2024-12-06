@@ -3,11 +3,13 @@ session_start();
 // The navbar should be included in all pages
 include "navbar.php"; include('db_connect.php');
 
-if (!isset($_SESSION['USER_ID'])) {
-    header('Location: login.php');
-    exit();
-}
 
+// The navbar should be included in all pages
+if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] == 'ADMIN') {
+    include "navbar_admin.php";
+} else {
+    include "navbar.php";
+}
 $user_id = $_SESSION['USER_ID'];
 
 $query = "SELECT * FROM users WHERE USER_ID = :user_id";
