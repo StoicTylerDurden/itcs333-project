@@ -73,7 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Execute the update query
             if ($update_stmt->execute()) {
-                echo "<div class='alert alert-success mt-5'>Room details updated successfully!</div>";
+                echo "<div class='alert alert-success mt-5'>Room details updated successfully! Redirecting in 3 seconds...</div>";
+                echo "<script>
+                    setTimeout(function() {
+                        window.location.href = 'admin_panel.php';
+                    }, 3000); // 3000 milliseconds = 3 seconds
+                </script>";
             } else {
                 echo "<div class='alert alert-danger mt-5'>Error updating room details.</div>";
             }
