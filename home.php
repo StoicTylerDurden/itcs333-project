@@ -1,15 +1,15 @@
 <?php
-session_start();
 
-require 'db_connect.php'; // Include your existing db connection file
+include 'db_connect.php'; // Include your existing db connection file
+include "navbar.php";
+include "User_dashboard.php";
 
 if ($_SESSION['USER_ROLE'] !== 'USER') {
     header("Location: login.php");
     exit();
 }
 
-include "navbar.php";
-include "User_dashboard.php";
+
 // Fetch total bookings per room
 $stmt = $pdo->query("SELECT r.ROOM_NAME, COUNT(b.BOOK_ID) AS TOTAL_BOOKINGS
                      FROM rooms r
