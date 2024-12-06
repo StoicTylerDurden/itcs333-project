@@ -9,6 +9,7 @@ if ($_SESSION['USER_ROLE'] !== 'USER') {
 }
 
 include "navbar.php";
+include "User_dashboard.php";
 // Fetch total bookings per room
 $stmt = $pdo->query("SELECT r.ROOM_NAME, COUNT(b.BOOK_ID) AS TOTAL_BOOKINGS
                      FROM rooms r
