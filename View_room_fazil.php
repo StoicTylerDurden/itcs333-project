@@ -8,14 +8,15 @@ if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] == 'ADMIN') {
 } else {
     include "navbar.php";
 }
+
 // Ensure user is logged in
 if (!isset($_SESSION['USER_ID'])) {
-    header("Location: login.php"); // Redirect to login page if not logged in
+    header("Location: login.php");
     exit();
 }
 
-// Fetch all room details from the database
-$sql = "SELECT ROOM_NAME, CAPACITY, EQUIPMENT, LOCATION FROM rooms";
+// Fetch all room details from the database, including ROOM_PICTURE
+$sql = "SELECT ROOM_NAME, CAPACITY, EQUIPMENT, LOCATION, ROOM_PICTURE FROM rooms";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -101,7 +102,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($result as $room): ?>
                 <div class="col-md-4 mb-4 room-card" data-room-name="<?php echo htmlspecialchars($room['ROOM_NAME']); ?>">
                     <div class="card h-100 shadow-sm">
-                        <img src="https://placehold.co/600x400" class="card-img-top" alt="Room image">
+                        <img src="<?php echo htmlspecialchars($room['ROOM_PICTURE'] ?: 'https://placehold.co/600x400'); ?>" class="card-img-top" alt="Room image">
                         <div class="card-body">
                             <h5 class="card-title text-primary"><?php echo htmlspecialchars($room['ROOM_NAME']); ?></h5>
                             <p class="card-text"><strong>Capacity:</strong> <?php echo htmlspecialchars($room['CAPACITY']); ?></p>
@@ -135,7 +136,6 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfZ2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy63B9q64WdZWQUiUq4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 </body>
-
 </html>

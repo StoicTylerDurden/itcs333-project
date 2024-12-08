@@ -1,8 +1,12 @@
 <?php
 session_start();
-// Include the database connection
+require 'aws.phar';
 include 'db_connect.php';
 include 'navbar_admin.php';
+require 'config.php'; // Contains AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
 
 // Check if user is logged in and is an admin
 if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] !== 'ADMIN') {
@@ -10,49 +14,73 @@ if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] !== 'ADMIN') {
     exit("Error: You are not a logged in admin.");
 }
 
-// Get the ROOM_ID from the URL
-if (isset($_GET['room_id'])) {
-    $room_id = $_GET['room_id'];
+// Initialize AWS S3 client
+$s3 = new S3Client([
+    'region' => 'us-east-1',
+    'version' => 'latest',
+    'credentials' => [
+        'key' => AWS_ACCESS_KEY_ID,
+        'secret' => AWS_SECRET_ACCESS_KEY,
+    ],
+]);
 
-    // Fetch the room details from the database
-    try {
-        $query = "SELECT * FROM rooms WHERE ROOM_ID = :room_id";
-        $stmt = $pdo->prepare($query);
-        $stmt->bindParam(':room_id', $room_id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // If room exists, fetch the details
-        if ($stmt->rowCount() > 0) {
-            $room = $stmt->fetch(PDO::FETCH_ASSOC);
-        } else {
-            echo "<div class='alert alert-danger mt-5'>Error: Room not found!</div>";
-            exit();
-        }
-    } catch (PDOException $e) {
-        echo "<div class='alert alert-danger mt-5'>Error: " . $e->getMessage() . "</div>";
-        exit();
-    }
-} else {
+// Check if ROOM_ID is set
+if (!isset($_GET['room_id'])) {
     echo "<div class='alert alert-danger mt-5'>Room ID is missing!</div>";
     exit();
 }
 
-// Check if the form is submitted
+$room_id = $_GET['room_id'];
+
+// Fetch the room details
+try {
+    $query = "SELECT * FROM rooms WHERE ROOM_ID = :room_id";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':room_id', $room_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $room = $stmt->fetch(PDO::FETCH_ASSOC);
+    } else {
+        echo "<div class='alert alert-danger mt-5'>Error: Room not found!</div>";
+        exit();
+    }
+} catch (PDOException $e) {
+    echo "<div class='alert alert-danger mt-5'>Error: " . htmlspecialchars($e->getMessage()) . "</div>";
+    exit();
+}
+
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get the form data
     $room_name = $_POST['room_name'];
     $capacity = $_POST['capacity'];
     $equipment = $_POST['equipment'];
     $location = $_POST['location'];
 
-    // Sanitize and validate input
-    $room_name = htmlspecialchars($room_name);
-    $capacity = htmlspecialchars($capacity);
-    $equipment = htmlspecialchars($equipment);
-    $location = htmlspecialchars($location);
+    // Keep current picture unless a new one is uploaded
+    $room_picture_url = $room['ROOM_PICTURE'];
+
+    $room_picture = $_FILES['room_picture'];
+    if ($room_picture['error'] === UPLOAD_ERR_OK) {
+        // New image uploaded
+        $fileName = time() . '_' . basename($room_picture['name']);
+        $fileTmpPath = $room_picture['tmp_name'];
+
+        try {
+            $result = $s3->putObject([
+                'Bucket' => 'testingmarketplace', // Replace with your bucket name
+                'Key' => 'room_pictures/' . $fileName,
+                'SourceFile' => $fileTmpPath,
+            ]);
+            $room_picture_url = $result['ObjectURL'];
+        } catch (AwsException $e) {
+            echo "<div class='alert alert-danger mt-5'>Error uploading to S3: " . htmlspecialchars($e->getMessage()) . "</div>";
+            exit();
+        }
+    }
 
     try {
-        // Check if the room name is unique
+        // Check if room name is unique (except for current room)
         $query = "SELECT * FROM rooms WHERE ROOM_NAME = :room_name AND ROOM_ID != :room_id";
         $stmt = $pdo->prepare($query);
         $stmt->bindParam(':room_name', $room_name, PDO::PARAM_STR);
@@ -60,77 +88,85 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
-            echo "<div class='alert alert-danger mt-5'>Error: Room name already exists. Please choose a different name.</div>";
+            echo "<div class='alert alert-danger mt-5'>Error: Room name already exists. Choose another name.</div>";
         } else {
-            // Update the room details
-            $update_query = "UPDATE rooms SET ROOM_NAME = :room_name, CAPACITY = :capacity, EQUIPMENT = :equipment, LOCATION = :location WHERE ROOM_ID = :room_id";
+            // Update room details
+            $update_query = "UPDATE rooms SET ROOM_NAME = :room_name, CAPACITY = :capacity, EQUIPMENT = :equipment, LOCATION = :location, ROOM_PICTURE = :room_picture WHERE ROOM_ID = :room_id";
             $update_stmt = $pdo->prepare($update_query);
             $update_stmt->bindParam(':room_name', $room_name, PDO::PARAM_STR);
             $update_stmt->bindParam(':capacity', $capacity, PDO::PARAM_INT);
             $update_stmt->bindParam(':equipment', $equipment, PDO::PARAM_STR);
             $update_stmt->bindParam(':location', $location, PDO::PARAM_STR);
+            $update_stmt->bindParam(':room_picture', $room_picture_url, PDO::PARAM_STR);
             $update_stmt->bindParam(':room_id', $room_id, PDO::PARAM_INT);
 
-            // Execute the update query
             if ($update_stmt->execute()) {
                 echo "<div class='alert alert-success mt-5'>Room details updated successfully! Redirecting in 3 seconds...</div>";
                 echo "<script>
                     setTimeout(function() {
                         window.location.href = 'admin_panel.php';
-                    }, 3000); // 3000 milliseconds = 3 seconds
+                    }, 3000);
                 </script>";
             } else {
                 echo "<div class='alert alert-danger mt-5'>Error updating room details.</div>";
             }
         }
     } catch (PDOException $e) {
-        echo "<div class='alert alert-danger mt-5'>Error: " . $e->getMessage() . "</div>";
+        echo "<div class='alert alert-danger mt-5'>Error: " . htmlspecialchars($e->getMessage()) . "</div>";
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Room</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 </head>
-
 <body>
+<div class="container mt-5">
+    <br/>
+    <h1 class="mb-4 text-center">Update Room: <?php echo htmlspecialchars($room['ROOM_NAME']); ?></h1>
+    <form method="POST" action="edit_room.php?room_id=<?php echo urlencode($room_id); ?>" enctype="multipart/form-data" class="mt-5">
+        <div class="form-group">
+            <label for="room_name">Room Name</label>
+            <input type="text" class="form-control" name="room_name" id="room_name"
+                   value="<?php echo htmlspecialchars($room['ROOM_NAME']); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="capacity">Capacity</label>
+            <input type="number" class="form-control" name="capacity" id="capacity"
+                   value="<?php echo htmlspecialchars($room['CAPACITY']); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="equipment">Equipment</label>
+            <input type="text" class="form-control" name="equipment" id="equipment"
+                   value="<?php echo htmlspecialchars($room['EQUIPMENT']); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" class="form-control" name="location" id="location"
+                   value="<?php echo htmlspecialchars($room['LOCATION']); ?>" required>
+        </div>
 
-    <div class="container mt-5">
-        <!-- Use room name directly from the fetched details in $room array -->
-         <br/>
-        <h1 class="mb-4 text-center">Update Room: <?php echo htmlspecialchars($room['ROOM_NAME']); ?></h1>
-        <form method="POST" action="edit_room.php?room_id=<?php echo $room_id; ?>" class="mt-5">
+        <?php if (!empty($room['ROOM_PICTURE'])): ?>
             <div class="form-group">
-                <label for="room_name">Room Name</label>
-                <input type="text" class="form-control" name="room_name" id="room_name"
-                    value="<?php echo htmlspecialchars($room['ROOM_NAME']); ?>" required>
+                <label>Current Picture:</label><br>
+                <img src="<?php echo htmlspecialchars($room['ROOM_PICTURE']); ?>" alt="Room Image" style="max-width:200px;">
             </div>
-            <div class="form-group">
-                <label for="capacity">Capacity</label>
-                <input type="number" class="form-control" name="capacity" id="capacity"
-                    value="<?php echo htmlspecialchars($room['CAPACITY']); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="equipment">Equipment</label>
-                <input type="text" class="form-control" name="equipment" id="equipment"
-                    value="<?php echo htmlspecialchars($room['EQUIPMENT']); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="location">Location</label>
-                <input type="text" class="form-control" name="location" id="location"
-                    value="<?php echo htmlspecialchars($room['LOCATION']); ?>" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-50 mx-auto d-block">Update Room</button>
-        </form>
-    </div>
+        <?php endif; ?>
 
+        <div class="form-group">
+            <label for="room_picture">New Room Picture (Optional)</label>
+            <input type="file" id="room_picture" name="room_picture" class="form-control">
+            <small class="text-muted">Leave blank if you do not want to change the picture.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-50 mx-auto d-block">Update Room</button>
+    </form>
+</div>
 </body>
-
 </html>

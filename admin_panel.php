@@ -9,10 +9,8 @@ if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] !== 'ADMIN') {
     exit("Error: You are not a logged in admin.");
 }
 
-//echo "<br/><br/><br/>You are an admin";
-
-// Fetch all room details from the database
-$sql = "SELECT ROOM_ID, ROOM_NAME, CAPACITY, EQUIPMENT, LOCATION FROM rooms";
+// Fetch all room details from the database, including ROOM_ID for edit/delete links
+$sql = "SELECT ROOM_ID, ROOM_NAME, CAPACITY, EQUIPMENT, LOCATION, ROOM_PICTURE FROM rooms";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -24,10 +22,10 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title> <!-- 4.6.2 ver not 5.3.3 -->
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-        <style>
+    <style>
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
@@ -99,8 +97,10 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             background: #0056b3;
         }
 
-        .search-bar {
+        #search-bar {
             margin-bottom: 20px;
+            border-radius: 25px;
+            border: 2px solid #007bff;
         }
 
         input[type="text"] {
@@ -139,26 +139,20 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($result as $room): ?>
                 <div class="col-md-4 mb-4 room-card" data-room-name="<?php echo htmlspecialchars($room['ROOM_NAME']); ?>">
                     <div class="card h-100 shadow-sm">
-                        <img src="https://placehold.co/600x400" class="card-img-top" alt="Room image">
+                        <img src="<?php echo htmlspecialchars($room['ROOM_PICTURE'] ?: 'https://placehold.co/600x400'); ?>" class="card-img-top" alt="Room image">
                         <div class="card-body">
                             <h5 class="card-title text-primary"><?php echo htmlspecialchars($room['ROOM_NAME']); ?></h5>
-                            <p class="card-text"><strong>Capacity:</strong>
-                                <?php echo htmlspecialchars($room['CAPACITY']); ?></p>
-                            <p class="card-text"><strong>Equipment:</strong>
-                                <?php echo htmlspecialchars($room['EQUIPMENT']); ?></p>
-                            <p class="card-text"><strong>Location:</strong>
-                                <?php echo htmlspecialchars($room['LOCATION']); ?></p>
+                            <p class="card-text"><strong>Capacity:</strong> <?php echo htmlspecialchars($room['CAPACITY']); ?></p>
+                            <p class="card-text"><strong>Equipment:</strong> <?php echo htmlspecialchars($room['EQUIPMENT']); ?></p>
+                            <p class="card-text"><strong>Location:</strong> <?php echo htmlspecialchars($room['LOCATION']); ?></p>
                         </div>
                         <div class="card-footer bg-white">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex">
                                 <a href="edit_room.php?room_id=<?php echo urlencode($room['ROOM_ID']); ?>"
-                                    class="btn btn-warning w-100">Edit</a>
-
-                                <!--<a href="#"
-                                    class="btn btn-danger w-100">Delete</a>-->
+                                    class="btn btn-warning mr-2" style="flex: 1;">Edit</a>
 
                                 <a href="delete_room.php?room_id=<?php echo urlencode($room['ROOM_ID']); ?>"
-                                    class="btn btn-danger w-100"
+                                    class="btn btn-danger" style="flex: 1;"
                                     onclick="return confirm('Are you sure you want to delete this room?');">Delete</a>
                             </div>
                         </div>
@@ -166,8 +160,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             <?php endforeach; ?>
         </div>
-        <style>
-        </style>
+
         <script>
             // filter room cards based on search query
             document.getElementById('search-bar').addEventListener('input', function () {
@@ -184,6 +177,6 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 });
             });
         </script>
+    </div>
 </body>
-
 </html>
