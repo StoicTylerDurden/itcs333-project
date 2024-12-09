@@ -88,7 +88,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
-            echo "<div class='alert alert-danger mt-5'>Error: Room name already exists. Choose another name.</div>";
+            $error_message = "Error: Room name already exists. Choose another name.";
+            echo "<div class='container'>
+                <div class='alert alert-danger'>
+                    $error_message
+                </div>
+            </div>";
         } else {
             // Update room details
             $update_query = "UPDATE rooms SET ROOM_NAME = :room_name, CAPACITY = :capacity, EQUIPMENT = :equipment, LOCATION = :location, ROOM_PICTURE = :room_picture WHERE ROOM_ID = :room_id";
@@ -101,14 +106,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $update_stmt->bindParam(':room_id', $room_id, PDO::PARAM_INT);
 
             if ($update_stmt->execute()) {
-                echo "<div class='alert alert-success mt-5'>Room details updated successfully! Redirecting in 3 seconds...</div>";
+                $success_message = "Room details updated successfully! Redirecting in 3 seconds...";
+                echo "<div class='container'>
+            <div class='alert alert-success'>
+                $success_message
+            </div>
+        </div>";
                 echo "<script>
                     setTimeout(function() {
                         window.location.href = 'admin_panel.php';
                     }, 3000);
                 </script>";
             } else {
-                echo "<div class='alert alert-danger mt-5'>Error updating room details.</div>";
+                $error_message = "Error updating room details.";
+                echo "<div class='container booking-container'>
+            <div class='alert alert-danger'>
+                $error_message
+            </div>
+        </div>";
             }
         }
     } catch (PDOException $e) {
@@ -119,54 +134,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Room</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="admin_style.css">
 </head>
+
 <body>
-<div class="container mt-5">
-    <br/>
-    <h1 class="mb-4 text-center">Update Room: <?php echo htmlspecialchars($room['ROOM_NAME']); ?></h1>
-    <form method="POST" action="edit_room.php?room_id=<?php echo urlencode($room_id); ?>" enctype="multipart/form-data" class="mt-5">
-        <div class="form-group">
-            <label for="room_name">Room Name</label>
-            <input type="text" class="form-control" name="room_name" id="room_name"
-                   value="<?php echo htmlspecialchars($room['ROOM_NAME']); ?>" required>
-        </div>
-        <div class="form-group">
-            <label for="capacity">Capacity</label>
-            <input type="number" class="form-control" name="capacity" id="capacity"
-                   value="<?php echo htmlspecialchars($room['CAPACITY']); ?>" required>
-        </div>
-        <div class="form-group">
-            <label for="equipment">Equipment</label>
-            <input type="text" class="form-control" name="equipment" id="equipment"
-                   value="<?php echo htmlspecialchars($room['EQUIPMENT']); ?>" required>
-        </div>
-        <div class="form-group">
-            <label for="location">Location</label>
-            <input type="text" class="form-control" name="location" id="location"
-                   value="<?php echo htmlspecialchars($room['LOCATION']); ?>" required>
-        </div>
-
-        <?php if (!empty($room['ROOM_PICTURE'])): ?>
+    <div class="container mt-5">
+        <br />
+        <h1 class="mb-4 text-center">Update Room: <?php echo htmlspecialchars($room['ROOM_NAME']); ?></h1>
+        <form method="POST" action="edit_room.php?room_id=<?php echo urlencode($room_id); ?>"
+            enctype="multipart/form-data" class="mt-5">
             <div class="form-group">
-                <label>Current Picture:</label><br>
-                <img src="<?php echo htmlspecialchars($room['ROOM_PICTURE']); ?>" alt="Room Image" style="max-width:200px;">
+                <label for="room_name">Room Name</label>
+                <input type="text" class="form-control" name="room_name" id="room_name"
+                    value="<?php echo htmlspecialchars($room['ROOM_NAME']); ?>" required>
             </div>
-        <?php endif; ?>
+            <div class="form-group">
+                <label for="capacity">Capacity</label>
+                <input type="number" class="form-control" name="capacity" id="capacity"
+                    value="<?php echo htmlspecialchars($room['CAPACITY']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="equipment">Equipment</label>
+                <input type="text" class="form-control" name="equipment" id="equipment"
+                    value="<?php echo htmlspecialchars($room['EQUIPMENT']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" class="form-control" name="location" id="location"
+                    value="<?php echo htmlspecialchars($room['LOCATION']); ?>" required>
+            </div>
 
-        <div class="form-group">
-            <label for="room_picture">New Room Picture (Optional)</label>
-            <input type="file" id="room_picture" name="room_picture" class="form-control">
-            <small class="text-muted">Leave blank if you do not want to change the picture.</small>
-        </div>
+            <?php if (!empty($room['ROOM_PICTURE'])): ?>
+                <div class="form-group">
+                    <label>Current Picture:</label><br>
+                    <img src="<?php echo htmlspecialchars($room['ROOM_PICTURE']); ?>" alt="Room Image"
+                        style="max-width:200px;">
+                </div>
+            <?php endif; ?>
 
-        <button type="submit" class="btn btn-primary w-50 mx-auto d-block">Update Room</button>
-    </form>
-</div>
+            <div class="form-group">
+                <label for="room_picture">New Room Picture (Optional)</label>
+                <input type="file" id="room_picture" name="room_picture" class="form-control">
+                <small class="text-muted">Leave blank if you do not want to change the picture.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-50 mx-auto d-block">Update Room</button>
+        </form>
+    </div>
 </body>
+
 </html>
