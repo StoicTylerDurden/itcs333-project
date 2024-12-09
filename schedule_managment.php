@@ -28,9 +28,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':status', $status);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Schedule added successfully!');</script>";
+        $success_message = "Schedule added successfully!";
+                echo "<div class='container'>
+            <div class='alert alert-success'>
+                $success_message
+            </div>
+        </div>";
+                echo "<script>
+                    setTimeout(function() {
+                        window.location.href = 'schedule_managment.php';
+                    }, 3000);
+                </script>";
     } else {
-        echo "<script>alert('Error adding schedule: " . $stmt->errorInfo()[2] . "');</script>";
+        echo "<div class='container'>
+            <div class='alert alert-danger'>
+                'Error adding schedule: " . $stmt->errorInfo()[2] . "'
+            </div>
+        </div>";
     }
 }
 
@@ -65,6 +79,7 @@ $rooms_result = $rooms_stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Room Schedule Management</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="admin_style.css">
 </head>
 
 <body>
@@ -72,7 +87,7 @@ $rooms_result = $rooms_stmt->fetchAll(PDO::FETCH_ASSOC);
         <h1>Room Schedule Management</h1>
 
         <!-- Display Existing Schedules -->
-        <table class="table">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Room#</th>
