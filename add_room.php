@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $room_picture = $_FILES['room_picture'];
 
     // Handle file upload if a file is selected
-    $room_picture_url = NULL; 
+    $room_picture_url = NULL;
     if ($room_picture['error'] === UPLOAD_ERR_OK) {
         $fileName = time() . '_' . basename($room_picture['name']);
         $fileTmpPath = $room_picture['tmp_name'];
@@ -60,29 +60,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $insert_stmt->bindParam(':location', $location, PDO::PARAM_STR);
     $insert_stmt->bindParam(':room_picture', $room_picture_url, PDO::PARAM_STR);
 
+
+
+    // After successfully adding a room
     if ($insert_stmt->execute()) {
-        echo "<br/><br/><div class='alert alert-success'>Room added successfully! Redirecting in 3 seconds...</div>";
+        $success_message = "Room added successfully! Redirecting in 3 seconds...";
+        echo "<div class='container booking-container'>
+        <div class='alert alert-success'>
+            $success_message
+        </div>
+    </div>";
         echo "<script>
-            setTimeout(function() {
-                window.location.href = 'admin_panel.php';
-            }, 3000);
-        </script>";
+        setTimeout(function() {
+            window.location.href = 'admin_panel.php';
+        }, 3000);
+    </script>";
     } else {
-        echo "<div class='alert alert-danger'>Error adding room: " . $insert_stmt->errorInfo()[2] . "</div>";
+        $error_message = "Error adding room: " . $insert_stmt->errorInfo()[2];
+        echo "<div class='container booking-container'>
+        <div class='booking-title'>Room Addition Failed</div>
+        <div class='alert alert-danger'>
+            $error_message
+        </div>
+    </div>";
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Room</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
-          crossorigin="anonymous">
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="admin_style.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <h1 class="mb-4 text-center">Add New Room</h1>
@@ -116,4 +132,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 </body>
+
 </html>
