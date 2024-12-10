@@ -1,0 +1,118 @@
+/* global.css */
+:root {
+    --primary-color: #002060; /* Navy Blue */
+    --secondary-color: #D4AF37; /* Gold */
+    --background-color: #F8F9FA; /* Light Gray */
+    --text-color: #002060; /* Navy Blue */
+    --accent-color: #FFFFFF; /* White */
+}
+
+/* General Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    background-color: var(--accent-color);
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+/* Headers */
+h1 {
+    color: var(--primary-color);
+    font-family: 'Georgia', serif;
+    text-align: center;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--accent-color);
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--accent-color);
+}
+
+/* Search Bar */
+.search-bar {
+    border-radius: 25px;
+    border: 2px solid var(--primary-color);
+    padding: 10px 20px;
+}
+
+.search-bar:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+    box-shadow: 0px 0px 5px rgba(212, 175, 55, 0.5);
+}
+
+/* Cards */
+.card {
+    border-radius: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-footer {
+    background-color: var(--accent-color);
+    text-align: center;
+    border-top: none;
+}
+
+.card-footer a {
+    background-color: var(--primary-color);
+    color: var(--accent-color);
+    text-decoration: none;
+    border-radius: 25px;
+    transition: background-color 0.3s;
+}
+
+.card-footer a:hover {
+    background-color: var(--secondary-color);
+    color: var(--accent-color);
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--primary-color) !important;
+}
+
+.navbar-brand, .nav-link {
+    color: var(--accent-color) !important;
+}
+
+.nav-link:hover {
+    color: var(--secondary-color) !important;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 15px;
+    }
+}
