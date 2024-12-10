@@ -37,7 +37,9 @@ $total_usage_hours = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Room Booking Statistics</h2>
+        <div class="text-center">
+            <h2>Room Booking Statistics</h2>
+        </div>
         
         <h3>Total Bookings per Room</h3>
         <table class="table">
