@@ -1,11 +1,16 @@
 <?php
 session_start();
-include "navbar.php"; // Include the navigation bar
 include "db_connect.php"; // Include the database connection
 
 // Initialize session variables for booked times if not already set
 if (!isset($_SESSION['Array_booked'])) {
     $_SESSION['Array_booked'] = [];
+}
+// The navbar should be included in all pages
+if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] == 'ADMIN') {
+    include "navbar_admin.php";
+} else {
+    include "navbar.php";
 }
 
 // Retrieve room data from URL parameters and store it in session variables
