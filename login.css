@@ -10,13 +10,18 @@ body,h1,p{
 
 /* Vars */
 :root{
-  --bg: #e6e6e7;
+  --bg: #F8F9FA;
   --text: #e6e6e7;
   --border: 2px solid var(--text);
   --color: #A78BFA;
-  --color-hover: #835cfa;
+  --color-hover: #D4AF37;
   --shadow: rgba(0,0,0,.2);
   --fg: #111827;
+  --primary-color: #002060; /* Navy Blue */
+  --secondary-color: #D4AF37; /* Gold */
+  --background-color: #F8F9FA; /* Light Gray */
+  --text-color: #002060; /* Navy Blue */
+  --accent-color: #FFFFFF; /* White */
 }
 
 body{
@@ -34,16 +39,83 @@ main{
     justify-content: center;
 }
 
+.header-container {
+    display: flex;
+    align-items: center; /* Vertically align the logo and text */
+    justify-content: center; /* Horizontally center the text */
+    gap: 20px; /* Space between logo and text */
+    padding: 20px;
+    background-color: var(--primary-color);
+    box-shadow: 0px 10px 25px 3px var(--shadow);
+  }
+  
+  .logo {
+    max-width: 100px; /* Limit logo size */
+    height: auto;
+    border-radius: 25px;
+  }
+  
+  .text-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px; /* Optional, to control the width of the text area */
+  }
+  
+  .heading {
+    font-size: 2rem;
+    color: var(--text);
+    font-weight: 600;
+    background-color: var(--primary-color);
+    margin: 0;
+  }
+  
+  .heading-p {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    font-weight: 600;
+    background-color: var(--primary-color);
+    margin: 0;
+  }
+  
+  /* Responsive design for smaller screens */
+  @media screen and (max-width: 768px) {
+    .heading {
+      font-size: 1.8rem;
+    }
+  
+    .heading-p {
+      font-size: 1rem;
+    }
+  }
+  
+  /* Responsive design for very small screens like mobile phones */
+  @media screen and (max-width: 480px) {
+    .heading {
+      font-size: 1.5rem;
+    }
+  
+    .heading-p {
+      font-size: 0.9rem;
+    }
+  
+    .logo {
+      max-width: 80px; /* Smaller logo for small screens */
+    }
+  }
+
+
 .con{
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
 }
 
 h1{
     font-size: 2.5rem; /*1rem = 16px*/
-    color: var(--fg);
+    color: var(--primary-color)
 }
 
 .login-wrapper{
@@ -56,11 +128,13 @@ h1{
     border-radius: 15px;
     color: var(--text);
     font-weight: 600;
+    background-color: var(--primary-color);
 }
 
 .login-wrapper form{
     display: flex;
     flex-direction: column;
+    background-color: var(--primary-color);
     gap: 10px;
 }
 
@@ -73,6 +147,8 @@ h1{
     background: var(--fg);
     color: var(--text);
     outline: none;
+    background-color:var(--secondary-color);
+    color: black;
 }
 
 .login-wrapper form button{
@@ -87,6 +163,8 @@ h1{
     box-shadow: 0px 5px 7px 0px var(--shadow);
     font-weight: 600;
     transition: 0.35s ease;
+    background-color: var(--secondary-color);
+    color: black;
 }
 
 .login-wrapper form button:hover{
@@ -95,7 +173,7 @@ h1{
 }
 
 .login-wrapper p a{
-    color: var(--color);
+    color: var(--secondary-color);
     text-decoration: none;
 }
 
