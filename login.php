@@ -3,23 +3,32 @@ session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="login.css">
 </head>
+
 <body>
+    <div class="header-container">
+        <img class="logo" src="logo.png" alt="Logo">
+        <div class="text-container">
+            <h1 class="heading">WELCOME TO ROOM BOOKING</h1>
+            <p class="heading-p">Book rooms for IT department in simple steps</p>
+        </div>
+    </div>
     <main>
         <div class="con">
             <h1>Login</h1>
             <div class="login-wrapper">
                 <form action="login_process.php" method="post">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" placeholder="Enter Email" required>
 
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required>
 
                     <button type="submit">Login</button>
                     <?php
@@ -38,4 +47,5 @@ session_start();
         </div>
     </main>
 </body>
+
 </html>
