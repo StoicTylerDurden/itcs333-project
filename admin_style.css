@@ -92,7 +92,7 @@ form {
     color: #343a40;
 }
 
-.search-bar {
+#search-bar {
     border-radius: 25px;
     border: 2px solid #007bff;
     padding: 10px 20px;
