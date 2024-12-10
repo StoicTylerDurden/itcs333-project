@@ -8,31 +8,77 @@
   <title></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
   <style>
-  body {
-    padding-top: 70px; /* Add spacing between the navbar and content */
-  }
-  .navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1030;
-  }
-  .navbar-nav {
-    margin-left: auto; /* Push links to the right */
-  }
-  .nav-link {
-    transition: color 0.3s ease, background-color 0.3s ease;
-  }
-  .nav-link:hover {
-    color: #ffc107; /* Change the text color on hover */
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle background effect */
-    border-radius: 5px; /* Add rounded edges for a polished look */
-  }
-</style>
+    body {
+      padding-top: 70px;
+      /* Add spacing between the navbar and content */
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+    }
+
+    .navbar-nav {
+      margin-left: auto;
+      /* Push links to the right */
+    }
+
+    .nav-link {
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffc107;
+      /* Change the text color on hover */
+      background-color: rgba(255, 255, 255, 0.1);
+      /* Subtle background effect */
+      border-radius: 5px;
+      /* Add rounded edges for a polished look */
+    }
+
+    :root {
+      --primary-color: #002060;
+      /* Navy Blue */
+      --secondary-color: #D4AF37;
+      /* Gold */
+      --background-color: #F8F9FA;
+      /* Light Gray */
+      --text-color: #002060;
+      /* Navy Blue */
+      --accent-color: #FFFFFF;
+      /* White */
+    }
+
+    /* General Body Styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: var(--primary-color) !important;
+    }
+
+    .navbar-brand,
+    .nav-link {
+      color: var(--accent-color) !important;
+    }
+
+    .nav-link:hover {
+      color: var(--secondary-color) !important;
+    }
+    
+  </style>
 
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <a class="navbar-brand" href="View_room_fazil.php">Room Booking</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
