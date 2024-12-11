@@ -32,16 +32,17 @@ $total_usage_hours = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="admin_style.css">
     <title>Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container mt-5">
         <div class="text-center">
-            <h2>Room Booking Statistics</h2>
+            <h1>Room Booking Statistics</h1>
         </div>
         
-        <h3>Total Bookings per Room</h3>
+        <h2>Total Bookings per Room</h2>
         <table class="table">
             <thead>
                 <tr>
