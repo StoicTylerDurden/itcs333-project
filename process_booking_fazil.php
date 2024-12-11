@@ -3,7 +3,11 @@ session_start();
 include "db_connect.php"; // Include database connection
 
 // The navbar should be included in all pages
-include "navbar.php"; 
+if (!isset($_SESSION['USER_ID']) || $_SESSION['USER_ROLE'] == 'ADMIN') {
+    include "navbar_admin.php";
+} else {
+    include "navbar.php";
+}
 
 $user_id = $_SESSION['USER_ID']; // Get user ID from session
 $room_name = $_SESSION['room_name']; // Get room name from session
