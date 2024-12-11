@@ -39,19 +39,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt->rowCount() > 0) {
                 $error_message = "The selected time slot overlaps with an existing booking.";
             } else {
-                // Insert new booking
-                $sql = "INSERT INTO bookings (USER_ID, ROOM_ID, START_TIME, END_TIME, STATUS) 
-                        VALUES (:user_id, 
-                                (SELECT ROOM_ID FROM rooms WHERE ROOM_NAME = :room_name), 
-                                :start_time, :end_time, 'BOOKED')";
+                // Check for conflicts with schedules (Maintenance or Booked)
+                $sql = "
+                    SELECT *
+                    FROM schedules
+                    JOIN rooms ON schedules.ROOM_ID = rooms.ROOM_ID
+                    WHERE rooms.ROOM_NAME = :room_name
+                      AND schedules.STATUS IN ('MAINTENANCE', 'BOOKED')
+                      AND DATE = :date
+                      AND (TIME(:stime) < TIME(END_TIME) AND TIME(:etime) > TIME(START_TIME))
+                ";
                 $stmt = $pdo->prepare($sql);
-                $stmt->bindValue(":user_id", $user_id);
                 $stmt->bindValue(":room_name", $room_name);
-                $stmt->bindValue(":start_time", "$date_selected $stime_selected");
-                $stmt->bindValue(":end_time", "$date_selected $etime_selected");
+                $stmt->bindValue(":date", $date_selected);
+                $stmt->bindValue(":stime", $stime_selected);
+                $stmt->bindValue(":etime", $etime_selected);
                 $stmt->execute();
 
-                $success_message = "Booking successful!";
+                if ($stmt->rowCount() > 0) {
+                    $error_message = "The room is unavailable due to maintenance or another schedule conflict.";
+                } else {
+                    // Insert new booking
+                    $sql = "
+                        INSERT INTO bookings (USER_ID, ROOM_ID, START_TIME, END_TIME, STATUS)
+                        VALUES (:user_id,
+                                (SELECT ROOM_ID FROM rooms WHERE ROOM_NAME = :room_name),
+                                :start_time, :end_time, 'BOOKED')
+                    ";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->bindValue(":user_id", $user_id);
+                    $stmt->bindValue(":room_name", $room_name);
+                    $stmt->bindValue(":start_time", "$date_selected $stime_selected");
+                    $stmt->bindValue(":end_time", "$date_selected $etime_selected");
+                    $stmt->execute();
+
+                    $success_message = "Booking successful!";
+                }
             }
         } catch (PDOException $e) {
             $error_message = "Database error: " . $e->getMessage();
