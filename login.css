@@ -129,6 +129,7 @@ h1{
     color: var(--text);
     font-weight: 600;
     background-color: var(--primary-color);
+    max-width: 410px;
 }
 
 .login-wrapper form{
@@ -136,6 +137,8 @@ h1{
     flex-direction: column;
     background-color: var(--primary-color);
     gap: 10px;
+    /* max width 250px */
+    max-width: 410px;
 }
 
 .login-wrapper form input{
