@@ -104,7 +104,7 @@ if (isset($_GET['edit_schedule'])) {
     $stmt->bindParam(':sid', $sid);
     $stmt->execute();
     $schedule = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if ($schedule) {
         $room_id = $schedule['ROOM_ID'];
         $date = $schedule['DATE'];
@@ -117,6 +117,7 @@ if (isset($_GET['edit_schedule'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,47 +126,52 @@ if (isset($_GET['edit_schedule'])) {
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="admin_style.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <h1 class="mb-4 text-center">Manage Schedules and Bookings</h1>
 
-        <?php if (isset($success_message)) echo "<div class='alert alert-success'>$success_message</div>"; ?>
-        <?php if (isset($error_message)) echo "<div class='alert alert-danger'>$error_message</div>"; ?>
-
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Room</th>
-                    <th>Date</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Status</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($combined_result as $row) { ?>
+        <?php if (isset($success_message))
+            echo "<div class='alert alert-success'>$success_message</div>"; ?>
+        <?php if (isset($error_message))
+            echo "<div class='alert alert-danger'>$error_message</div>"; ?>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td><?= htmlspecialchars($row['ROOM_NAME']) ?></td>
-                        <td><?= htmlspecialchars($row['DATE']) ?></td>
-                        <td><?= htmlspecialchars($row['START_TIME']) ?></td>
-                        <td><?= htmlspecialchars($row['END_TIME']) ?></td>
-                        <td><?= htmlspecialchars($row['STATUS']) ?></td>
-                        <td><?= htmlspecialchars($row['TYPE']) ?></td>
-                        <td>
-                            <?php if ($row['TYPE'] === 'Schedule') { ?>
-                                <a href="?edit_schedule=<?= $row['ID'] ?>" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="?delete_schedule=<?= $row['ID'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
-                            <?php } else { ?>
-                                <a href="?cancel_booking=<?= $row['ID'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Cancel</a>
-                            <?php } ?>
-                        </td>
+                        <th>Room</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Actions</th>
                     </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-
+                </thead>
+                <tbody>
+                    <?php foreach ($combined_result as $row) { ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['ROOM_NAME']) ?></td>
+                            <td><?= htmlspecialchars($row['DATE']) ?></td>
+                            <td><?= htmlspecialchars($row['START_TIME']) ?></td>
+                            <td><?= htmlspecialchars($row['END_TIME']) ?></td>
+                            <td><?= htmlspecialchars($row['STATUS']) ?></td>
+                            <td><?= htmlspecialchars($row['TYPE']) ?></td>
+                            <td>
+                                <?php if ($row['TYPE'] === 'Schedule') { ?>
+                                    <a href="?edit_schedule=<?= $row['ID'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="?delete_schedule=<?= $row['ID'] ?>" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Are you sure?')">Delete</a>
+                                <?php } else { ?>
+                                    <a href="?cancel_booking=<?= $row['ID'] ?>" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Are you sure?')">Cancel</a>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
         <h2>Add/Edit Schedule</h2>
         <form method="POST">
             <input type="hidden" name="action" value="edit_schedule">
@@ -175,21 +181,25 @@ if (isset($_GET['edit_schedule'])) {
                 <select name="room_id" id="room_id" class="form-control" required>
                     <option value="">Select a room</option>
                     <?php foreach ($rooms_result as $room) { ?>
-                        <option value="<?= $room['ROOM_ID'] ?>" <?= $room['ROOM_ID'] == $room_id ? 'selected' : '' ?>><?= htmlspecialchars($room['ROOM_NAME']) ?></option>
+                        <option value="<?= $room['ROOM_ID'] ?>" <?= $room['ROOM_ID'] == $room_id ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($room['ROOM_NAME']) ?></option>
                     <?php } ?>
                 </select>
             </div>
             <div class="form-group">
                 <label for="date">Date:</label>
-                <input type="date" name="date" id="date" class="form-control" value="<?= htmlspecialchars($date) ?>" required>
+                <input type="date" name="date" id="date" class="form-control" value="<?= htmlspecialchars($date) ?>"
+                    required>
             </div>
             <div class="form-group">
                 <label for="start_time">Start Time:</label>
-                <input type="time" name="start_time" id="start_time" class="form-control" value="<?= htmlspecialchars($start_time) ?>" required>
+                <input type="time" name="start_time" id="start_time" class="form-control"
+                    value="<?= htmlspecialchars($start_time) ?>" required>
             </div>
             <div class="form-group">
                 <label for="end_time">End Time:</label>
-                <input type="time" name="end_time" id="end_time" class="form-control" value="<?= htmlspecialchars($end_time) ?>" required>
+                <input type="time" name="end_time" id="end_time" class="form-control"
+                    value="<?= htmlspecialchars($end_time) ?>" required>
             </div>
             <div class="form-group">
                 <label for="status">Status:</label>
@@ -203,4 +213,5 @@ if (isset($_GET['edit_schedule'])) {
         </form>
     </div>
 </body>
+
 </html>
