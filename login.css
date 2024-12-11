@@ -3,7 +3,7 @@
     box-sizing: border-box;
 }
 
-body,h1,p{
+body,h1,h2,p{
     margin: 0;
     padding: 0;
 }
@@ -43,42 +43,43 @@ main{
     display: flex;
     align-items: center; /* Vertically align the logo and text */
     justify-content: center; /* Horizontally center the text */
+    flex-wrap: wrap;
     gap: 20px; /* Space between logo and text */
     padding: 20px;
     background-color: var(--primary-color);
     box-shadow: 0px 10px 25px 3px var(--shadow);
-  }
-  
-  .logo {
+    border-radius: 15px;
+}
+
+#logo{
     max-width: 100px; /* Limit logo size */
     height: auto;
-    border-radius: 25px;
-  }
-  
-  .text-container {
+}
+
+.text-container {
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 10px;
     max-width: 600px; /* Optional, to control the width of the text area */
-  }
-  
-  .heading {
+}
+
+.heading {
     font-size: 2rem;
     color: var(--text);
     font-weight: 600;
     background-color: var(--primary-color);
     margin: 0;
-  }
-  
-  .heading-p {
+}
+
+.heading-p {
     font-size: 1.2rem;
     color: var(--secondary-color);
     font-weight: 600;
     background-color: var(--primary-color);
     margin: 0;
-  }
-  
+}
+
   /* Responsive design for smaller screens */
   @media screen and (max-width: 768px) {
     .heading {
@@ -100,7 +101,7 @@ main{
       font-size: 0.9rem;
     }
   
-    .logo {
+    #logo {
       max-width: 80px; /* Smaller logo for small screens */
     }
   }
@@ -111,11 +112,18 @@ main{
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    padding: 0 20px;
 }
 
 h1{
     font-size: 2.5rem; /*1rem = 16px*/
     color: var(--primary-color)
+}
+
+h2{
+    font-size: 2rem; /*1rem = 16px*/
+    color: var(--secondary-color);
+    text-align: center;
 }
 
 .login-wrapper{
@@ -129,7 +137,7 @@ h1{
     color: var(--text);
     font-weight: 600;
     background-color: var(--primary-color);
-    max-width: 410px;
+    max-width: 650px;
 }
 
 .login-wrapper form{
@@ -138,7 +146,6 @@ h1{
     background-color: var(--primary-color);
     gap: 10px;
     /* max width 250px */
-    max-width: 410px;
 }
 
 .login-wrapper form input{
@@ -152,6 +159,10 @@ h1{
     outline: none;
     background-color:var(--secondary-color);
     color: black;
+}
+
+.login-wrapper form input::placeholder{
+    color: rgba(0,0,0,.4);
 }
 
 .login-wrapper form button{

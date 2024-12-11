@@ -12,17 +12,17 @@ session_start();
 </head>
 
 <body>
-    <div class="header-container">
-        <img class="logo" src="logo.png" alt="Logo">
-        <div class="text-container">
-            <h1 class="heading">WELCOME TO ROOM BOOKING</h1>
-            <p class="heading-p">Book rooms for IT department in simple steps</p>
-        </div>
-    </div>
     <main>
         <div class="con">
-            <h1>Login</h1>
+            <div class="header-container">
+                <img id="logo" src="logo.png" alt="Logo">
+                <div class="text-container">
+                    <h1 class="heading">WELCOME TO ROOM BOOKING</h1>
+                    <p class="heading-p">Book rooms for IT department in simple steps</p>
+                </div>
+            </div>
             <div class="login-wrapper">
+                <h2>Login</h2>
                 <form action="login_process.php" method="post">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" placeholder="Enter Email" required>

@@ -60,26 +60,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    <div class="header-container">
-        <img class="logo" src="logo.png" alt="Logo">
-        <div class="text-container">
-            <h1 class="heading">WELCOME TO ROOM BOOKING</h1>
-            <p class="heading-p">Book rooms for IT department in simple steps</p>
-        </div>
-    </div>
-
     <!-- <h1 class="heading">WELCOME TO ROOM BOOKING</h1>
     <p class="heading-p">Book rooms for IT department in simple steps</p> -->
     <main>
         <div class="con">
-            <h1>Register</h1>
+        <div class="header-container">
+            <img id="logo" src="logo.png" alt="Logo">
+            <div class="text-container">
+                <h1 class="heading">WELCOME TO ROOM BOOKING</h1>
+                <p class="heading-p">Book rooms for IT department in simple steps</p>
+            </div>
+        </div>
             <div class="login-wrapper">
-                <?php
-                if (isset($_SESSION['registration_error'])) {
-                    echo "<p style='color: red;'>" . $_SESSION['registration_error'] . "</p>";
-                    unset($_SESSION['registration_error']);
-                }
-                ?>
+                <h2>Register</h2>
                 <form action="register.php" method="post">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" placeholder="Enter name" required>
@@ -91,6 +84,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="password" id="password" name="password" placeholder="Enter Password" required>
 
                     <button type="submit">Register</button>
+                    <?php
+                    if (isset($_SESSION['registration_error'])) {
+                        echo "<p id='login-error'>" . $_SESSION['registration_error'] . "</p>";
+                        unset($_SESSION['registration_error']);
+                    }
+                ?>
                 </form>
                 <p>Already have an account? <a href="login.php">Login here</a></p>
             </div>
